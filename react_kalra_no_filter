@@ -1,0 +1,12 @@
+#/bin/bash
+
+echo -e "Target /home/projects/archive/cisplatin/react/meijer.txt
+Base /home/projects/archive/cisplatin/PGS/results_v4/filtered_ambiguous_snps/kalra_no_filter_react_input.txt
+Output /home/projects/archive/cisplatin/PGS/results_v4/filtered_ambiguous_snps/GrpPRS_kalra_no_filter.out
+Pthres 1
+nCase 168
+nControl 222
+nBase 90710,255925
+OverlapCases 0
+OverlapControls 0" > /home/projects/archive/cisplatin/PGS/results_v4/filtered_ambiguous_snps/par_kalra_no_filter.grpprs
+

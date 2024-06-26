@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DATA=/home/projects/archive/cisplatin/PGS/results_v2
+KALRA=/home/projects/archive/cisplatin/PGS/results_v4
+PLINK=/opt/plink-1.09/plink
+RESULTS=/home/projects/archive/cisplatin/PGS/results_v4
+
+$PLINK --bfile $DATA/Xu_no_phenotype \
+     	--score $KALRA/kalra_deseq_milo_adjusted.raw --allow-no-sex  --out $RESULTS/Xu_no_ambigous_snps_kalra_deseq_milo_adjusted_PRS
+

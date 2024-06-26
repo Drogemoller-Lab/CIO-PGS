@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#Specify where data is located
+DATA=/home/projects/cisplatin/Xu_CIO_study_data/v2/output/QC
+PLINK=/opt/plink-1.09/plink
+RESULTS=/home/projects/cisplatin/Xu_CIO_study_data/v2/output/QC_2
+
+#Remove variants with missing >95%
+$PLINK --bfile $DATA/Xu_data --geno 0.05 \
+	--allow-no-sex --make-bed --out $RESULTS/Xu_data_snps_excluded_geno005
+
+#Remove samples with missing >95%
+$PLINK --bfile $RESULTS/Xu_data_snps_excluded_geno005 --mind 0.05 \
+	--allow-no-sex --make-bed --out $RESULTS/Xu_data_samples_excluded_mind005
+
+#Remove variants with a HWE P < 0.0001
+$PLINK --bfile $RESULTS/Xu_data_samples_excluded_mind005 \
+	--allow-no-sex --hwe 0.0001 --make-bed --out $RESULTS/Xu_data_hwe00001
+
+#Get stats including heterozygosity rates
+$PLINK --bfile $RESULTS/Xu_data_hwe00001 \
+	--hardy \
+	--allow-no-sex --out $RESULTS/Xu_data_heterozygosity_rate
+
+#Determine which variants are in LD
+$PLINK --bfile $RESULTS/Xu_data_hwe00001 \
+	--indep-pairwise 50 5 0.2 \
+	--allow-no-sex --out $RESULTS/Xu_data_variants_in_LD \
+	--make-bed
+
+#Prune for LD - prune based on list made above
+$PLINK --bfile $RESULTS/Xu_data_variants_in_LD \
+	--extract $RESULTS/Xu_data_variants_in_LD.prune.in --make-bed \
+	--allow-no-sex --out $RESULTS/Xu_data_pruned_for_LD
+
+#Determine relatedness
+$PLINK --bfile $RESULTS/Xu_data_variants_in_LD \
+	--genome --min 0.2 \
+	--allow-no-sex --out $RESULTS/Xu_data_relatedness
+
+#Remove samples which appear to be related
+$PLINK --bfile $RESULTS/Xu_data_hwe00001 \
+	--remove $RESULTS/mysamples.txt --make-bed --out $RESULTS/Xu_data_related_samples_excluded
